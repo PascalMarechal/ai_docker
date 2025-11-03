@@ -3,15 +3,13 @@ services:
     image: vllm/vllm-openai:latest
     container_name: vllm
     command:
-      # No --model here—load dynamically via API/UI
-      - --host
-      - 0.0.0.0
-      - --port
-      - "8000"
-      - --dtype
-      - float16  # Default; override per-model if needed
-      - --max-model-len
-      - "4096"  # Global default; adjust per load
+      --model Qwen/Qwen3-4B-Instruct-2507
+      --dtype auto
+      --max-model-len 32768
+      --gpu-memory-utilization 0.75
+      --enforce-eager
+      --kv-cache-dtype fp8
+      --host 0.0.0.0
     ports:
       - "8000:8000"  # Expose API
     deploy:
