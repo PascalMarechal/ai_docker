@@ -1,0 +1,45 @@
+services:
+  vllm:
+    image: vllm/vllm-openai:latest
+    container_name: vllm
+    command:
+      # No --model here—load dynamically via API/UI
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --dtype
+      - float16  # Default; override per-model if needed
+      - --max-model-len
+      - "4096"  # Global default; adjust per load
+    ports:
+      - "8000:8000"  # Expose API
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}  # From .env for gated models
+    restart: unless-stopped
+    volumes:
+      - ./.huggingface:/root/.cache/huggingface  # Cache downloads
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}
+    container_name: open-webui-vllm
+    volumes:
+      - ./.open-webui:/app/backend/data
+    depends_on:
+      - vllm
+    ports:
+      - "3000:8080"
+    environment:
+      - OPENAI_API_BASE_URL=http://vllm:8000/v1
+      - OPENAI_API_KEY=sk-1234  # Dummy; adjust if adding vLLM auth
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped

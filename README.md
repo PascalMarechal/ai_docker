@@ -1,5 +1,7 @@
 # Local AI
 
+Local AI hosted on http://localhost:3000
+
 ## Requirements
 
 Before proceeding, ensure the following dependencies are installed:
@@ -24,17 +26,45 @@ nvidia-smi
 
 This command checks if the NVIDIA drivers are functioning correctly.
 
-## Running the Containers
+## Ollama
 
 Once all dependencies are installed and verified, you can start the containers using Docker Compose.
 
 Run the following command to start your containers in detached mode:
 
 ```bash
+cd ollama
 docker compose up -d
 ```
 
 This will initiate the containers as per your `docker-compose.yml` configuration.
+
+## VLLM
+
+Once all dependencies are installed and verified, you can start the containers using Docker Compose.
+
+Run the following command to start your containers in detached mode:
+
+```bash
+cd vllm
+docker compose up -d
+```
+
+### Install model
+
+For exemple to install GPT OSS 120B : 
+
+```bash
+docker exec -it vllm huggingface-cli download openai/gpt-oss-120b
+```
+
+### Env file
+
+Add an .env file to download custom models : 
+
+```bash
+echo "HF_TOKEN=hf_YourRealTokenHere" > .env
+```
 
 ## Troubleshooting
 
