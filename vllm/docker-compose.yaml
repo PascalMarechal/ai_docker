@@ -22,6 +22,7 @@ services:
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}  # From .env for gated models
+      # - HF_HUB_OFFLINE=1 # Use this if no connection.
     restart: unless-stopped
     volumes:
       - ./.huggingface:/root/.cache/huggingface  # Cache downloads
